@@ -1,4 +1,4 @@
-'use server'
+
 import BDG from "@/COMP_UI/BDG";
 import { ReactNode } from "react";
 import B_Data from "./BDG_Data";
@@ -39,11 +39,6 @@ export default async function BDG_Page(file: File) {
 
 
     });
-
-
-
-
-
     let items: ReactNode[] = [];
     let pages: ReactNode[] = [];
     _data.forEach((value, index) => {

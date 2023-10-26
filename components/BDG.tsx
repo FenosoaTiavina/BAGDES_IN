@@ -1,7 +1,34 @@
-
+'use server'
+import { StyleHTMLAttributes, Suspense, useState } from 'react';
 import Image from 'next/image';
 import LOGO from '@/Assets/UABS-LOGO.png'
+import default_photo from '@/Assets/Photos/default.png'
 import B_Data from './BDG_Data';
+import axios from 'axios';
+import { Separator } from '@/COMP_UI/ui/separator';
+// import BDGAvatar from './BDGAvatar';
+
+export const api = axios.create({
+    baseURL: 'http://localhost:3001',
+});
+
+async function BDGAvatar({ src, alt }: { src: string, alt: string }) {
+    let _image: string = "/Photos/default.png"
+    await api.post('/upload', {
+        photo: src
+    }).then(response => {
+        _image = (`/Photos/${response.data.name}`);
+    })
+    return (
+        <Image
+            className='rounded-full'
+            src={_image}
+            width={250}
+            height={250}
+            alt={alt}
+        />
+    )
+}
 
 
 function Info({ Placeholder, Value }: { Placeholder: string, Value: string }) {
@@ -11,21 +38,25 @@ function Info({ Placeholder, Value }: { Placeholder: string, Value: string }) {
     return (
         <div className='info w-full grid px-3' style={info_style}>
             <div className='Placeholder flex justify-start'>{Placeholder}:</div>
-            <div className='Value underline decoration-dotted underline-offset-8'>{Value}</div>
+            <div className='Value w-full flex flex-col justify-center items-center'>
+                <div>{Value}</div>
+                <span className='w-full border border-gray-600 border-dashed max-h-[1px] min-w-full' />
+            </div>
         </div>
     )
 }
-export default function BGD({ Data, p_width, p_height }: { Data: B_Data, p_width: number, p_height: number }) {
-    const bdg_info_style = {
-        gridTemplateRows: 'auto 200px',
 
+export default function BGD({ Data }: { Data: B_Data, p_width: number, p_height: number }) {
+    const bdg_info_style: React.CSSProperties = {
+        gridTemplateRows: 'auto 200px',
     }
 
     return (
         <>
-
             <div className="relative   min-h-[1010px]  min-w-[625px] bg-gray-200 flex flex-col items-center justify-evenly ">
+
                 <div className='w-full flex flex-col justify-center items-center z-[10]'>
+                    <div className='bg-blue-500 opacity-50 rounded-b-3xl h-[460px] w-full absolute top-0 -z-10'></div>
 
                     <Image
                         src={LOGO}
@@ -35,20 +66,22 @@ export default function BGD({ Data, p_width, p_height }: { Data: B_Data, p_width
                         className='mx-auto'
                     />
 
-                    <div className="Titles text-blue-900 font-semibold mx-auto flex flex-col justify-center items-center text-lg">
+                    <div className="Titles text-blue-900 font-semibold mx-auto flex flex-col justify-center items-center text-xl">
                         <h3>Université Aceem Business School</h3>
                         <h3>Ankadivato</h3>
                     </div>
 
                 </div>
                 <div className='Photo-Placeholder h-[250px] w-full flex justify-center items-center mr-auto z-[10]'>
-                    <img
-                        className='rounded-full'
-                        src={Data.Photo}
-                        width={250}
-                        height={250}
-                        alt={`${Data.Name}'s photo`}
-                    />
+                    <Suspense fallback={
+                        <Image
+                            src={default_photo} alt=''
+                            width={250} height={250}
+                        />}>
+
+                        <BDGAvatar src={Data.Photo} alt={`${Data.FirstName}'s Photo`} />
+
+                    </Suspense>
                 </div>
 
                 <div className='Info-container w-full h-[500px] mt-3 mr-auto flex justify-center items-center relative'>
@@ -57,7 +90,7 @@ export default function BGD({ Data, p_width, p_height }: { Data: B_Data, p_width
                         <span id='School-year' className='absolute text-blue-900 font-bold text-3xl -top-[20px] text-center w-full flex justify-center items-center' >
                             <div className='px-3 max-w-max bg-gray-200'>2023-2024</div>
                         </span>
-                        <div className='grid grid-row-5 w-full h-full text-gray-900 text-xl pt-5 font-semibold justify-center items-center gap-4'>
+                        <div className='grid grid-row-5 w-full h-full text-gray-900 text-2xl pt-5 font-semibold justify-center items-center gap-4'>
                             <Info Placeholder='Nom' Value={Data.Name} />
                             <Info Placeholder='Prenoms' Value={Data.FirstName} />
                             <Info Placeholder='Matricule' Value={Data.Matricule.toString()} />
