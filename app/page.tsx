@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { MutableRefObject, ReactNode, Suspense, useRef, useState } from 'react';
 import { Loader2, DownloadIcon, Check } from "lucide-react";
 import generatePDF from 'react-to-pdf';
+import BGD from '@/components/BDG';
 
 
 async function HandleBadgesPagesDowloads(ref: MutableRefObject<HTMLDivElement | null>) {
@@ -65,7 +66,7 @@ export default function Home() {
                 })
               }
             }}>
-            <p>Télecharger</p> <Separator className='mx-3' orientation="vertical" /> <DownloadIcon />
+            <p>Télecharger PDF</p> <Separator className='mx-3' orientation="vertical" /> <DownloadIcon />
           </Button>
         </Suspense >
 
@@ -73,6 +74,17 @@ export default function Home() {
 
 
       <Separator className="my-4" />
+      {/* <BGD
+        Data={
+          {
+            FirstName: 'Fenosoa',
+            Name: "RAKOTO",
+            Matricule: 0o31,
+            Mention: 'Informatique de Gestion',
+            Parcours: 'L3',
+            Photo: '"C:/Users/Fenosoa/Downloads/Fenosoa.jpg"'
+          }} /> */}
+
       <div ref={targetRef} className="contentPDF box-border " >
         <Suspense fallback={<p>Chargement....</p>}>
           {Pages}

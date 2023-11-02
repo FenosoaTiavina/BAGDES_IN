@@ -44,7 +44,7 @@ export default async function BDG_Page(file: File) {
     _data.forEach((value, index) => {
 
         if (items.length !== 9) {
-            items.push(<div key={index} className="border-green-500 w-full h-full flex justify-center items-center"> <BDG Data={value} p_width={2480} p_height={3507} /></div>);
+            items.push(<div key={index} className="border-green-500 w-full h-full flex justify-center items-center"> <BDG Data={value}/></div>);
         } else {
             pages.push(<_Page_temp BDGs={items} key={pages.length} />);
             items = new Array;

@@ -1,5 +1,4 @@
-'use server'
-import { StyleHTMLAttributes, Suspense, useState } from 'react';
+import { StyleHTMLAttributes, Suspense, useEffect, useState } from 'react';
 import Image from 'next/image';
 import LOGO from '@/Assets/UABS-LOGO.png'
 import default_photo from '@/Assets/Photos/default.png'
@@ -12,33 +11,51 @@ export const api = axios.create({
     baseURL: 'http://localhost:3001',
 });
 
-async function BDGAvatar({ src, alt }: { src: string, alt: string }) {
-    let _image: string = "/Photos/default.png"
-    await api.post('/upload', {
-        photo: src
-    }).then(response => {
-        _image = (`/Photos/${response.data.name}`);
-    })
-    return (
-        <Image
-            className='rounded-full'
-            src={_image}
-            width={250}
-            height={250}
-            alt={alt}
-        />
-    )
+interface BDGAvatarProps {
+  src: string;
+  alt: string;
+}
+
+async function uploadImage(src: string): Promise<string> {
+  try {
+    const response = await api.post('/upload', { photo: src });
+    return response.data.name;
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    return "/Photos/default.png";
+  }
+}
+
+function BDGAvatar({ src, alt }: BDGAvatarProps) {
+  const [image, setImage] = useState<string>("/Photos/default.png");
+
+  useEffect(() => {
+    uploadImage(src).then((imageName) => {
+      setImage(imageName);
+    });
+  }, [src]);
+
+  return (
+    <img
+      className='rounded-full'
+      src={image}
+      alt={alt}
+      width={250}
+      height={250}
+    />
+  );
 }
 
 
 function Info({ Placeholder, Value }: { Placeholder: string, Value: string }) {
+    
     const info_style = {
         gridTemplateColumns: '125px auto'
     };
     return (
         <div className='info w-full grid px-3' style={info_style}>
             <div className='Placeholder flex justify-start'>{Placeholder}:</div>
-            <div className='Value w-full flex flex-col justify-center items-center'>
+            <div className='Value w-full flex flex-col justify-evenly items-center'>
                 <div>{Value}</div>
                 <span className='w-full border border-gray-600 border-dashed max-h-[1px] min-w-full' />
             </div>
@@ -46,17 +63,20 @@ function Info({ Placeholder, Value }: { Placeholder: string, Value: string }) {
     )
 }
 
-export default function BGD({ Data }: { Data: B_Data, p_width: number, p_height: number }) {
+export default function BGD({ Data }: { Data: B_Data }) {
     const bdg_info_style: React.CSSProperties = {
         gridTemplateRows: 'auto 200px',
     }
 
     return (
         <>
-            <div className="relative   min-h-[1010px]  min-w-[625px] bg-gray-200 flex flex-col items-center justify-evenly ">
+            <div className="relative border border-gray-500  min-h-[1010px]  min-w-[625px] flex flex-col items-center justify-evenly ">
+                    <div className='bg-blue-500 opacity-50 rounded-b-3xl h-[460px] w-full absolute top-0 -z-[1]'></div>
+                    <div className='bg-white rounded-b-3xl h-[1010px] min-w-[625px] absolute top-0 -z-[2]'></div>
 
                 <div className='w-full flex flex-col justify-center items-center z-[10]'>
-                    <div className='bg-blue-500 opacity-50 rounded-b-3xl h-[460px] w-full absolute top-0 -z-10'></div>
+                    
+                    
 
                     <Image
                         src={LOGO}
@@ -88,9 +108,9 @@ export default function BGD({ Data }: { Data: B_Data, p_width: number, p_height:
 
                     <div className='Info aspect-square h-[500px] grid  border-4 rounded-xl border-gray-900 relative' style={bdg_info_style} >
                         <span id='School-year' className='absolute text-blue-900 font-bold text-3xl -top-[20px] text-center w-full flex justify-center items-center' >
-                            <div className='px-3 max-w-max bg-gray-200'>2023-2024</div>
+                            <div className='px-3 max-w-max bg-white '>2023-2024</div>
                         </span>
-                        <div className='grid grid-row-5 w-full h-full text-gray-900 text-2xl pt-5 font-semibold justify-center items-center gap-4'>
+                        <div className='grid grid-row-5 w-full h-full text-gray-900 font-light text-2xl pt-5 justify-center items-center gap-4'>
                             <Info Placeholder='Nom' Value={Data.Name} />
                             <Info Placeholder='Prenoms' Value={Data.FirstName} />
                             <Info Placeholder='Matricule' Value={Data.Matricule.toString()} />

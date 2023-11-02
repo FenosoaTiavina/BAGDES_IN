@@ -1,8 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const fs = require("fs");
-const { rmSync } = require("fs");
-const { existsSync } = require("fs");
+const { existsSync, copyFile } = require("fs");
 const app = express();
 const port = 3001;
 
@@ -25,23 +23,27 @@ app.use('/public/Photos', express.static('/public/Photos'));
 
 // Create an endpoint for file uploads
 app.post('/upload', (req, res) => {
-    const photo = req.body.photo;
-    const name = photo.split('/').slice(-1)[0]
+    const photo = req.body.photo.replace(/\\/g, '/');
+    const name = photo.split('/').slice(-1)[0];
+    const newPath = `/public/Photos/${name}`;
 
-    const newPath = `/public/Photos/${name}`
+    // if (!existsSync(photo)) {
+    //     res.status(500).json({ message: `${photo} does not exist` }).end();
+    // }
+
     if (existsSync(newPath)) {
-        console.log('file exist');
-        rmSync(newPath)
-    }
-    fs.copyFile(photo, `${process.cwd()}${newPath}`, (err) => {
-        if (err) {
-            console.error('Error copying the file:', err);
-            res.status(500).json({ message: "Error while copying file" });
 
+        res.status(200).json({ message: "File already exists", path: newPath, name: name }).end();
+
+    }
+
+    copyFile(photo, `${process.cwd()}${newPath}`, (err) => {
+        if (err) {
+            res.status(500).json({ message: `Error while copying file : ${photo} -> ${newPath}` }).end();
         } else {
-            res.status(200).json({ path: newPath, name: name });
+            res.status(200).json({ path: newPath, name: name }).end();
         }
-    })
+    });
 
 });
 
