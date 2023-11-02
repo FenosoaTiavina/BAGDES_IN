@@ -1,10 +1,10 @@
 import { StyleHTMLAttributes, Suspense, useEffect, useState } from 'react';
 import Image from 'next/image';
 import LOGO from '@/Assets/UABS-LOGO.png'
-import default_photo from '@/Assets/Photos/default.png'
+import default_photo from '@/Assets/default.png'
 import B_Data from './BDG_Data';
 import axios from 'axios';
-import { Separator } from '@/COMP_UI/ui/separator';
+import { Separator } from '@/components/ui/separator';
 // import BDGAvatar from './BDGAvatar';
 
 export const api = axios.create({
@@ -22,12 +22,12 @@ async function uploadImage(src: string): Promise<string> {
     return response.data.name;
   } catch (error) {
     console.error("Error uploading image:", error);
-    return "/Photos/default.png";
+    return "/default.png";
   }
 }
 
 function BDGAvatar({ src, alt }: BDGAvatarProps) {
-  const [image, setImage] = useState<string>("/Photos/default.png");
+  const [image, setImage] = useState<string>("/default.png");
 
   useEffect(() => {
     uploadImage(src).then((imageName) => {

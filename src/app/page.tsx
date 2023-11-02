@@ -1,6 +1,6 @@
 'use client'
 import { InputFile } from '@/components/InputFile';
-import BDG_Page from '@/components/Pages';
+import BDG_Page from './BDG_PAGES';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
@@ -28,6 +28,7 @@ export default function Home() {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!file) return
+    
     const data = new FormData()
     data.set('file', file)
     setPages(
@@ -74,7 +75,7 @@ export default function Home() {
 
 
       <Separator className="my-4" />
-      {/* <BGD
+      <BGD
         Data={
           {
             FirstName: 'Fenosoa',
@@ -83,14 +84,15 @@ export default function Home() {
             Mention: 'Informatique de Gestion',
             Parcours: 'L3',
             Photo: '"C:/Users/Fenosoa/Downloads/Fenosoa.jpg"'
-          }} /> */}
+          }} />
 
-      <div ref={targetRef} className="contentPDF box-border " >
+      {/* <div ref={targetRef} className="contentPDF box-border " >
         <Suspense fallback={<p>Chargement....</p>}>
           {Pages}
         </Suspense>
-
       </div>
+ */}
+
     </main >
 
 
